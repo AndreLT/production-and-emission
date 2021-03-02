@@ -1,0 +1,24 @@
+{
+  "name": "production-and-emission",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "d3-fetch": "^2.0.0",
+    "d3-scale": "^3.2.3",
+    "framer-motion": "^3.8.1",
+    "next": "10.0.7",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-simple-maps": "^2.3.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.2.4",
+    "postcss": "^8.2.6",
+    "tailwindcss": "^2.0.3"
+  }
+}
