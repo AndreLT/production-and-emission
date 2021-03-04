@@ -13,10 +13,10 @@ const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
 
 const colorScale = scaleLinear()
-  .domain([0.0, 10174.7])
-  .range(["#ffd4d7", "#ff5233"]);
+  .domain([0.007, 10174.7])
+  .range(["#fff5f5", "#ff6e6e"]);
 
-const MapChart = (kind) => {
+const MapChart = ({ year }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const MapChart = (kind) => {
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill={d ? colorScale(d["2017"]) : "#F5F4F6"}
+                  fill={d ? colorScale(d[year]) : "#F5F4F6"}
                   style={{
                     hover: {
                       fill: "#F53",
