@@ -9,6 +9,8 @@ import {
   NumberDecrementStepper,
 } from "@chakra-ui/react";
 
+import FadeOnView from "./FadeOnView";
+
 export default function WorldMap() {
   const [year, setYear] = useState("2019");
 
@@ -24,27 +26,28 @@ export default function WorldMap() {
   };
   return (
     <div className="w-full">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2 }}
-        className="w-5/6 mx-auto my-10"
-      >
-        <MapChart year={year} />
-        <NumberInput
-          onChange={(val) => changeRange(val)}
-          defaultValue={2019}
-          min={2000}
-          max={2019}
-          keepWithinRange={true}
-        >
-          <NumberInputField />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
-      </motion.div>
+      <FadeOnView>
+        <div className="w-5/6 mx-auto my-10">
+          <p className="text-center w-full text-3xl mb-5">
+            World Green Gas Emission
+          </p>
+          <NumberInput
+            onChange={(val) => changeRange(val)}
+            defaultValue={2019}
+            min={2000}
+            max={2019}
+            keepWithinRange={true}
+            className="w-2/12 m-auto"
+          >
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          <MapChart year={year} />
+        </div>
+      </FadeOnView>
     </div>
   );
 }

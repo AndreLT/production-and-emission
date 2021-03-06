@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
-import React, { useState } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import React, { useState, useEffect } from "react";
 import {
   PieChart,
   Pie,
@@ -14,7 +15,8 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { Box, Text, Heading, Divider } from "@chakra-ui/react";
+
+import SpecificEmissionBar from "./SpecificEmissionBar";
 
 const initial = [
   {
@@ -56,22 +58,6 @@ const energy = [
   { name: "Other", value: 20.9 },
 ];
 
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-white bg-opacity-80 px-5 py-3">
-        <p className="text-gray-600">{label}</p>
-        <p className="intro">{`${payload[0].value}%`}</p>
-        <p className="desc">{`${(51 * (payload[0].value / 100)).toFixed(
-          2
-        )} tons of emission/year`}</p>
-      </div>
-    );
-  }
-
-  return null;
-};
-
 const renderActiveShape = (props) => {
   const RADIAN = Math.PI / 180;
   const {
@@ -99,9 +85,16 @@ const renderActiveShape = (props) => {
 
   return (
     <g>
+      <text x={cx} y={cy - 20} dy={8} textAnchor="middle" fill="grey">
+        {`${payload.value}%`}
+      </text>
       <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
         {payload.name}
       </text>
+      <text x={cx} y={cy + 20} dy={8} textAnchor="middle" fill="grey">
+        {`${(51 * (payload.value / 100)).toFixed(2)} billion tons`}
+      </text>
+
       <Sector
         cx={cx}
         cy={cy}
@@ -120,40 +113,46 @@ const renderActiveShape = (props) => {
         outerRadius={outerRadius + 10}
         fill={fill}
       />
-      <path
-        d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`}
-        stroke={fill}
-        fill="none"
-      />
-      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-      <text
-        x={ex + (cos >= 0 ? 1 : -1) * 12}
-        y={ey}
-        textAnchor={textAnchor}
-        fill="#333"
-      >{`${(51 * (value / 100)).toFixed(2)} billion tons/year`}</text>
-      <text
-        x={ex + (cos >= 0 ? 1 : -1) * 12}
-        y={ey}
-        dy={18}
-        textAnchor={textAnchor}
-        fill="#999"
-      >
-        {`(Rate ${(percent * 100).toFixed(2)}%)`}
-      </text>
     </g>
   );
 };
 
+function FadeInWhenVisible({ children }) {
+  const controls = useAnimation();
+  const [ref, inView] = useInView();
+
+  useEffect(() => {
+    if (inView) {
+      controls.start("visible");
+    }
+  }, [controls, inView]);
+
+  return (
+    <motion.div
+      ref={ref}
+      animate={controls}
+      initial="hidden"
+      transition={{ duration: 0.3 }}
+      variants={{
+        visible: { opacity: 1, scale: 1 },
+        hidden: { opacity: 0, scale: 0 },
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function EmissionPie() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [barData, setBarData] = useState(null);
   const [data, setData] = useState(initial);
+
   return (
-    <div className="w-5/6 m-auto pt-10 grid grid-flow-col grid-cols-2 grid-rows-1 gap-4">
-      <div style={{ height: "60vh" }}>
+    <div className="w-5/6 m-auto pt-10 grid grid-flow-col md:grid-cols-2 md:grid-rows-1 grid-rows-2 grid-cols-1">
+      <div style={{ height: "60vh", zIndex: 20 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart width={600} height={900}>
+          <PieChart width={700} height={900}>
             <Pie
               activeIndex={activeIndex}
               activeShape={renderActiveShape}
@@ -165,7 +164,7 @@ export default function EmissionPie() {
               fill={data === energy ? "#ff6e6e" : "#8884d8"}
               dataKey="value"
               onMouseEnter={(_, index) => setActiveIndex(index)}
-              onClick={(_, index) => setSelectedIndex(index)}
+              onClick={(_, index) => setBarData(data[index])}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -175,45 +174,7 @@ export default function EmissionPie() {
         </ResponsiveContainer>
       </div>
 
-      <motion.div className="p-10 h-96 shadow-md">
-        {selectedIndex !== null ? (
-          <div className="w-full h-80">
-            <p className="text-3xl border-b mb-5 text-center border-gray-300">
-              {data[selectedIndex].name}
-            </p>
-            <ResponsiveContainer width="90%" height="90%">
-              <BarChart
-                width={500}
-                height={300}
-                data={data[selectedIndex].subCat}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend />
-                <Bar dataKey="value" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <>
-            <p className="text-3xl border-b text-center border-gray-300">
-              World Green Gas Emission
-            </p>
-            <p className="pt-5 w-11/12 mx-auto text-gray-600">
-              This is what the world emission looks divided by sector. To find
-              out more details about each of them, just click.
-            </p>
-          </>
-        )}
-      </motion.div>
+      <SpecificEmissionBar data={barData} />
     </div>
   );
 }
