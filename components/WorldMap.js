@@ -27,9 +27,13 @@ export default function WorldMap() {
   return (
     <div className="w-full">
       <FadeOnView>
-        <div className="w-5/6 mx-auto my-10">
+        <div className="w-5/6 mx-auto mt-48 my-10">
           <p className="text-center w-full text-3xl mb-5">
             World Green Gas Emission
+          </p>
+          <p className="mx-5 mb-10 text-center">
+            This is how the worldwide emission of CO2 and equivalents looks
+            like.
           </p>
           <NumberInput
             onChange={(val) => changeRange(val)}

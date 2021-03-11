@@ -29,7 +29,7 @@ export default function SpecificEmissionBar({ data }) {
   };
   return (
     <motion.div
-      className="p-10 h-96 m-auto shadow-inner w-full bg-white"
+      className="p-10 h-96 m-auto w-full"
       transition={{ duration: 0.3 }}
     >
       {data !== null ? (

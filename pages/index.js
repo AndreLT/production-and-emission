@@ -1,25 +1,23 @@
-import Head from "next/head";
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React from "react";
 import WorldMap from "../components/WorldMap";
-import EmissionPie from "../components/EmissionPie";
 import Header from "../components/Header";
 import FadeOnView from "../components/FadeOnView";
+import EmissionPie from "../components/EmissionPie";
+import EnergyStack from "../components/EnergyStack";
 
 export default function Home() {
   return (
-    <div className="w-full">
+    <div className="w-full" style={{ backgroundColor: "#fbfff0" }}>
       <Header />
       <div
-        className="w-full text-center text-5xl"
-        style={{ marginTop: "35vh", marginBottom: "35vh" }}
+        className="w-full font-serif font-semibold text-center text-5xl"
+        style={{ marginTop: "30vh", marginBottom: "30vh" }}
       >
         <p>World Production and Emission</p>
-        <p className="mt-10">Giving Perspective</p>
+        <p className="mt-5">Giving Perspective</p>
       </div>
-      <FadeOnView>
-        <EmissionPie />
-      </FadeOnView>
+      <EmissionPie />
+      <EnergyStack />
       <WorldMap />
     </div>
   );
