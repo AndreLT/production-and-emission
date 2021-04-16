@@ -27,7 +27,7 @@ export default function WorldMap() {
   return (
     <div className="w-full">
       <FadeOnView>
-        <div className="w-5/6 mx-auto mt-48 my-10">
+        <div className="w-5/6 mx-auto my-10">
           <p className="text-center w-full text-3xl mb-5">
             World Green Gas Emission
           </p>
